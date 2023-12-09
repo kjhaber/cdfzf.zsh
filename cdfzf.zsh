@@ -38,7 +38,7 @@ function cdfzf() {
   # find list of subdirectories of ROOT_DIR.
   # the sed command removes ROOT_DIR from the options shown during fuzzy select
   ROOT_SUBDIR_LIST=$( \
-    find -L "$ROOT_DIR" -type d -maxdepth "$MAX_SUBDIR_DEPTH" | \
+    find -L "$ROOT_DIR" -maxdepth "$MAX_SUBDIR_DEPTH" -type d | \
     sed -e "s|^$ROOT_DIR||g" -e "s|^/||g" \
   )
 
