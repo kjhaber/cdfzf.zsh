@@ -45,17 +45,22 @@ function cdfzf() {
   # strip out hidden directories.  maybe make this conditional later
   ROOT_SUBDIR_LIST=$( grep -v -E '(^\.)|(\/\.)' <<< "$ROOT_SUBDIR_LIST" )
 
-  # fuzzy-select from list of subdirectories
-  # the bare 'echo' adds an empty element to allow selecting the root dir itself
-  ROOT_SUBDIR=$( {echo "$ROOT_SUBDIR_LIST" ; echo } | fzf-tmux --no-multi -r )
+  if [ -z "$ROOT_SUBDIR_LIST" ] ; then
+    # change to selected directory immediately if there are no subdirectories
+    cd "$ROOT_DIR" || return 1
+  else
+    # fuzzy-select from list of subdirectories
+    # the bare 'echo' adds an empty element to allow selecting the root dir itself
+    ROOT_SUBDIR=$( {echo "$ROOT_SUBDIR_LIST" ; echo } | fzf-tmux --no-multi -r )
 
-  # if fzf did not exit normally, don't change directory
-  if [ $? -ne 0 ] ; then
-    return 1
+    # if fzf did not exit normally, don't change directory
+    if [ $? -ne 0 ] ; then
+      return 1
+    fi
+
+    # change to selected directory and output new location
+    cd "$ROOT_DIR/$ROOT_SUBDIR" || return 1
   fi
-
-  # change to selected directory and output new location
-  cd "$ROOT_DIR/$ROOT_SUBDIR" || return 1
   pwd
 }
 
